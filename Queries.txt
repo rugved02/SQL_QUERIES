@@ -1,0 +1,215 @@
+/* CREATE DATABASE ecommerce; */
+USE ecommerce;
+
+CREATE TABLE product (
+product_id VARCHAR(10) NOT NULL PRIMARY KEY,
+product_name VARCHAR(100) NOT NULL,
+category VARCHAR(65) NOT NULL,
+sub_category VARCHAR(45) NOT NULL,
+original_price DOUBLE NOT NULL,
+selling_price DOUBLE NOT NULL,
+stock INT NOT NULL
+);
+
+
+CREATE TABLE customer (
+customer_id VARCHAR(10) NOT NULL PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+city VARCHAR(65) NOT NULL,
+email VARCHAR(45) NOT NULL,
+phone_no VARCHAR(15) NOT NULL,
+address VARCHAR(100) NOT NULL,
+pin_code INT NOT NULL
+);
+
+
+CREATE TABLE order_details (
+order_id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+customer_id VARCHAR(10) NOT NULL,
+product_id VARCHAR(10) NOT NULL,
+quantity DOUBLE NOT NULL,
+total_price DOUBLE NOT NULL,
+payment_mode VARCHAR(60) NOT NULL,
+order_date DATETIME NOT NULL,
+order_status VARCHAR(20) NOT NULL,
+FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
+FOREIGN KEY (product_id) REFERENCES product(product_id)
+);
+
+
+Insert Queries
+
+INSERT INTO product
+(product_id, product_name, category, sub_category, original_price, selling_price, stock)
+VALUES
+('P101','Television','Electronics','phone',70000,55000,100),
+('P102','Chair','furniture','Chairs',20000,15000,10);
+
+
+INSERT INTO customer
+(customer_id, name, city, email, phone_no, address, pin_code)
+VALUES
+('C1001','Steve','Tokyo','steve@gmail.com','4567897652','f.g.road',1000001),
+('C1002','john','Sydney','john@gmail.com','9987234567','k.c.road',75001);
+
+
+INSERT INTO order_details
+(customer_id, product_id, quantity, total_price, payment_mode, order_date, order_status)
+VALUES
+('C1002','P101',1,55000,'COD','2023-11-19','shipped'),
+('C1001','P101',1,55000,'COD','2023-10-30','delivered');
+
+
+
+Select Queries
+
+SELECT * FROM customer;
+
+SELECT product_name, category, sub_category FROM product;
+
+SELECT * FROM product;
+
+SELECT * FROM customer WHERE name LIKE '%er';
+
+SELECT * FROM customer WHERE email LIKE '%example%';
+
+SELECT * FROM customer WHERE name LIKE 'J___';
+
+
+
+Update & Delete
+
+UPDATE customer SET email = 'johndoe@example.com'
+WHERE customer_id = 'C1002';
+
+UPDATE customer SET email = 'peter.parker@mail.com'
+WHERE customer_id = 'C1003';
+
+DELETE FROM customer WHERE customer_id = 'C1007';
+
+
+
+BETWEEN Operator Queries
+
+
+SELECT * FROM product
+WHERE original_price BETWEEN 1000 AND 20000;
+
+SELECT * FROM order_details
+WHERE order_date BETWEEN '2023-11-19' AND '2023-11-30';
+
+SELECT * FROM product
+WHERE original_price NOT BETWEEN 1000 AND 20000;
+
+SELECT * FROM product
+WHERE product_name BETWEEN 'A' AND 'P';
+
+
+LIKE Operator Queries
+
+
+SELECT * FROM customer WHERE name LIKE 'J%';
+
+SELECT * FROM customer WHERE name LIKE 'j___';
+
+SELECT * FROM product WHERE product_name LIKE '%o_';
+
+
+
+IN / NOT IN Queries
+
+SELECT * FROM customer
+WHERE customer_id IN ('C1001','C1003','C1005');
+
+
+SELECT * FROM order_details
+WHERE customer_id IN (
+SELECT customer_id FROM customer WHERE city = 'Sydney'
+);
+
+SELECT * FROM product
+WHERE category IN ('Electronics', 'Furnitures');
+
+SELECT * FROM product
+WHERE product_id NOT IN ('P102', 'P104');
+
+
+
+NULL Checks
+
+SELECT name, email, address FROM customer WHERE name IS NULL;
+
+SELECT name, email, address FROM customer WHERE name IS NOT NULL;
+
+
+ORDER BY Queries
+
+
+SELECT * FROM customer ORDER BY name;
+
+SELECT * FROM order_details ORDER BY order_date;
+
+SELECT * FROM product ORDER BY original_price DESC;
+
+
+GROUP BY
+
+
+SELECT order_status AS 'Delivery Status',
+COUNT(*) AS Total
+FROM order_details
+GROUP BY order_status;
+
+
+UNION Queries
+
+
+SELECT product_id,product_name,category,sub_category,original_price,selling_price,stock,
+NULL AS order_id, NULL AS customer_id, NULL AS quantity, NULL AS total_price, NULL AS
+payment_mode, NULL AS order_date, NULL AS order_status FROM product
+UNION
+SELECT NULL AS product_id, NULL AS product_name, NULL AS category, NULL AS
+sub_category, NULL AS original_price, NULL AS selling_price, NULL AS
+stock,order_id,customer_id,quantity,total_price,payment_mode,order_date,order _status
+FROM order_details;
+
+
+SELECT product_id FROM product
+UNION
+SELECT product_id FROM order_details;
+
+
+Intersect Queries
+
+SELECT product_id FROM product
+WHERE product_id IN (SELECT product_id FROM order_details);
+
+
+Except
+
+SELECT *
+FROM product
+WHERE product_id NOT IN (
+SELECT product_id
+FROM order_details
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
